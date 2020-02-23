@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * 웹팩 Product 환경 설정
+ */
 const webpackMerge            = require('webpack-merge');
 const UglifyJsPlugin          = require('uglifyjs-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -9,8 +12,9 @@ const commonConfig            = require('./webpack.config.common');
 const helpers                 = require('./helpers');
 
 module.exports = webpackMerge(commonConfig, {
+    // Product 모드 
     mode: 'production',
-
+    // https://webpack.js.org/configuration/output/
     output: {
         path: helpers.root('dist'),
         publicPath: '/',
