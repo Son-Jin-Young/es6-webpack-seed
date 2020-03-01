@@ -21,7 +21,7 @@ export class Calculator {
 
         this.keepOperator = '';
 
-        this.resultEL.value = 0;
+        this.resultEL.value = '0';
     }
 
     addButtons(buttons) {
@@ -73,47 +73,37 @@ export class Calculator {
             return;
         }
 
-        if (operator === operatorType.RESULT) {
-            this.resultNumber = this.operator(this.keepOperator);
+        if (this.keepOperator) {
+            switch (this.keepOperator) {
+                case operatorType.PLUS:
+                    this.resultNumber += this.inputNumber;
+                    break;
+                case operatorType.MINUS:
+                    this.resultNumber -= this.inputNumber;
+                    break;
+                case operatorType.MULTIPLE:
+                    this.resultNumber *= this.inputNumber;
+                    break;
+                case operatorType.DIVISION:
+                    this.resultNumber = this.inputNumber !== 0 ?  (this.resultNumber /= this.inputNumber) : 0;
+                    break;
+            }
         } else {
-            this.resultNumber = !!this.keepOperator ? this.operator(this.keepOperator) : this.inputNumber;
+            this.resultNumber = this.inputNumber;
+        }
 
-            this.inputNumber = 0;
-
+        if (operator !== operatorType.RESULT) {
             this.keepOperator = operator;
         }
 
-        this.resultEL.value = this.resultNumber;
-    }
+        this.inputNumber = 0;
 
-    operator(operator) {
-        let returnValue = this.resultNumber;
-
-        switch (operator) {
-            case operatorType.MINUS:
-                returnValue -= this.inputNumber;
-                break;
-            case operatorType.MULTIPLE:
-                returnValue *= this.inputNumber;
-                break;
-            case operatorType.DIVISION:
-                returnValue = this.inputNumber !== 0 ? (returnValue / this.inputNumber) : 0;
-                break;
-            case operatorType.PLUS:
-                returnValue += this.inputNumber;
-                break;
-        }
-
-        console.log('return ::', returnValue);
-
-        return returnValue;
+        this.resultEL.value = String(this.resultNumber);
     }
 
     clickNumber(num) {
         this.inputNumber = this.inputNumber * 10 + num;
 
-        this.resultEL.value = this.inputNumber;
-
-        console.log('number ::', this.inputNumber);
+        this.resultEL.value = String(this.inputNumber);
     }
 }
