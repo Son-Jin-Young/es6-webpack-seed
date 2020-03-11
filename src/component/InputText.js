@@ -2,10 +2,13 @@ import {Form} from './Form';
 
 export class InputText extends Form {
     constructor(id) {
-        super(id);
+        super(id, null);
+        this.create();
     }
 
-    template() {
-        return `<input id="${this.id}" type="text">`;
+    create() {
+        this.element = document.createElement('input');
+        this.element.id = this.id;
+        this.element.type = 'text';
     }
 }

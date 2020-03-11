@@ -5,7 +5,8 @@ export class TextArea extends Form {
         super(id);
     }
 
-    template() {
-        return `<textarea id="${this.id}"></textarea>`;
+    create() {
+        this.element = document.createElement('textarea');
+        this.element.id = this.id;
     }
 }
