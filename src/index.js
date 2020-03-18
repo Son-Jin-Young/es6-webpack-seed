@@ -1,6 +1,6 @@
 import './style.css';
 
-import { Survey } from './model/survey';
+import { Survey } from './view/survey';
 import {InputRadios} from './component/InputRadios';
 import {InputText} from './component/InputText';
 import {InputCheckbox} from './component/InputCheckbox';
