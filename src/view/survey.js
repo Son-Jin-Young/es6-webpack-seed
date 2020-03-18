@@ -12,12 +12,36 @@ export class Survey {
     }
 
     init(initData = []) {
+        this.headerTag = 'h3';
         this.survey = initData;
 
         this.currentStepNo = 1;
 
+        this.createTemplate();
+    }
+
+    createTemplate() {
+        const rootDiv = document.createElement('div');
+
+        this.questionHeader = document.createElement(this.headerTag);
+
+        this.formDiv = document.createElement('div');
+        this.formDiv.setAttribute('class', 'form');
+
+        this.buttonWrapper = document.createElement('div');
+
         this.createButton();
-        this.initRender();
+
+        this.buttonWrapper.append(this.prevButton);
+        this.buttonWrapper.append(this.nextButton);
+        this.buttonWrapper.append(this.submitButton);
+
+        rootDiv.append(this.questionHeader);
+        rootDiv.append(this.formDiv);
+        rootDiv.append(this.buttonWrapper);
+
+        document.querySelector('#result').innerHTML = '';
+        document.querySelector('#result').append(rootDiv);
     }
 
     createButton() {
@@ -29,81 +53,36 @@ export class Survey {
         this.nextButton.innerText = '다음';
         this.submitButton.innerText = '완료';
 
-        this.prevButton.addEventListener('click', () => {
-            if (!this.isFirstStep) {
-                this.prevStep();
-            }
-        });
-        this.nextButton.addEventListener('click', () => {
-            if (!this.isLastStep) {
-                this.nextStep();
-            }
-        });
-        this.submitButton.addEventListener('click', () => {
-            if (this.isLastStep) {
-                this.submit();
-            }
-        });
+        this.prevButton.addEventListener('click', this.prevStep.bind(this));
+        this.nextButton.addEventListener('click', this.nextStep.bind(this));
+        this.submitButton.addEventListener('click', this.submit.bind(this));
     }
 
-    initRender() {
-        const rootDiv = document.createElement('div');
+    resultTemplate() {
+        this.questionHeader.innerText = '설문결과';
 
-        this.questionHeader = document.createElement('h4');
+        this.formDiv.innerHTML = '';
+        this.survey.map((item) => {
+            const wrapper = document.createElement('div');
+            const questionEL = document.createElement('h5');
 
-        this.formDiv = document.createElement('div');
+            questionEL.innerText = `Q. ${item.question}`;
+            const answerEL = document.createElement('span');
 
-        const buttonWrapper = document.createElement('div');
-        buttonWrapper.append(this.prevButton);
-        buttonWrapper.append(this.nextButton);
-        buttonWrapper.append(this.submitButton);
+            answerEL.innerText = `A. ${item.element.getValue}`;
+            wrapper.append(questionEL);
+            wrapper.append(answerEL);
+            wrapper.append(document.createElement('hr'));
 
-        rootDiv.append(this.questionHeader);
-        rootDiv.append(this.formDiv);
-        rootDiv.append(buttonWrapper);
+            return wrapper;
 
-        document.querySelector('#result').innerHTML = '';
-        document.querySelector('#result').append(rootDiv);
-    }
+        }).forEach((item) => this.formDiv.append(item));
 
-    validate() {
-        if (this.step) {
-            if (!this.step.element.getValue) {
-                alert('필수 입력사항입니다.');
-                return true;
-            }
-        }
+        this.prevButton.removeEventListener('click', this.prevStep.bind(this));
+        this.nextButton.removeEventListener('click', this.nextStep.bind(this));
+        this.submitButton.removeEventListener('click', this.submit.bind(this));
 
-        return false;
-    }
-
-    prevStep() {
-        if (!this.isFirstStep) {
-            this.currentStepNo--;
-            this.update();
-        }
-    }
-
-    nextStep() {
-        if (!this.validate()) {
-            if (!this.isLastStep) {
-                this.currentStepNo++;
-                this.update();
-            }
-        }
-    }
-
-    submit() {
-        if (!this.validate()) {
-            console.log('survey ::', this.survey.map((item) => item.element.getValue));
-
-            document.querySelector('#result').innerHTML = `<h4>설문결과</h4>
-                <div>${this.survey.map((item) => `Q. ${item.question}<br/>A. ${item.element.getValue}`).join('<hr><br>')}</div>`;
-        }
-    }
-
-    changeStep(stepNo = this.currentStepNo) {
-        this.step = this.survey.find((item) => item.stepNo === stepNo) || {question: '잘못된 스탭입니다.'};
+        this.buttonWrapper.innerHTML = '';
     }
 
     render({question, element}) {
@@ -121,8 +100,40 @@ export class Survey {
         this.submitButton.disabled = !this.isLastStep;
     }
 
+    validate() {
+        if (this.step && this.step.required && !this.step.element.getValue) {
+            alert('필수 입력사항입니다.');
+            return true;
+        }
+        return false;
+    }
+
+    prevStep() {
+        if (!this.isFirstStep) {
+            this.currentStepNo--;
+            this.update();
+        }
+    }
+
+    nextStep() {
+        if (!this.validate() && !this.isLastStep) {
+            this.currentStepNo++;
+            this.update();
+        }
+    }
+
+    changeStep(stepNo = this.currentStepNo) {
+        this.step = this.survey.find((item) => item.stepNo === stepNo) || {question: '잘못된 스탭입니다.'};
+    }
+
     update() {
         this.changeStep();
         this.render(this.step);
+    }
+
+    submit() {
+        if (!this.validate() && this.isLastStep) {
+            this.resultTemplate();
+        }
     }
 }
