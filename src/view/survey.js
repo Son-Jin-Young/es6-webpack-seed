@@ -1,6 +1,6 @@
 export class Survey {
-    constructor(initData) {
-        this.init(initData);
+    constructor() {
+        this.init();
     }
 
     get isFirstStep() {
@@ -11,37 +11,44 @@ export class Survey {
         return this.currentStepNo === this.survey.length;
     }
 
-    init(initData = []) {
+    init() {
         this.headerTag = 'h3';
-        this.survey = initData;
-
+        this.survey = [];
         this.currentStepNo = 1;
-
-        this.createTemplate();
     }
 
-    createTemplate() {
-        const rootDiv = document.createElement('div');
+    add(item) {
+        if (item) {
+            this.survey.push({...item, stepNo: (this.survey.length + 1)});
+        }
+    }
 
-        this.questionHeader = document.createElement(this.headerTag);
+    load() {
+        if (this.survey.length > 0) {
+            const rootDiv = document.createElement('div');
 
-        this.formDiv = document.createElement('div');
-        this.formDiv.setAttribute('class', 'form');
+            this.questionHeader = document.createElement(this.headerTag);
 
-        this.buttonWrapper = document.createElement('div');
+            this.formDiv = document.createElement('div');
+            this.formDiv.setAttribute('class', 'form');
 
-        this.createButton();
+            this.buttonWrapper = document.createElement('div');
 
-        this.buttonWrapper.append(this.prevButton);
-        this.buttonWrapper.append(this.nextButton);
-        this.buttonWrapper.append(this.submitButton);
+            this.createButton();
 
-        rootDiv.append(this.questionHeader);
-        rootDiv.append(this.formDiv);
-        rootDiv.append(this.buttonWrapper);
+            this.buttonWrapper.append(this.prevButton);
+            this.buttonWrapper.append(this.nextButton);
+            this.buttonWrapper.append(this.submitButton);
 
-        document.querySelector('#result').innerHTML = '';
-        document.querySelector('#result').append(rootDiv);
+            rootDiv.append(this.questionHeader);
+            rootDiv.append(this.formDiv);
+            rootDiv.append(this.buttonWrapper);
+
+            document.querySelector('#result').innerHTML = '';
+            document.querySelector('#result').append(rootDiv);
+
+            this.update();
+        }
     }
 
     createButton() {

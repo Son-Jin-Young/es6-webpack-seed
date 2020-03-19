@@ -39,15 +39,14 @@ const execute = () => {
     // Step 3. Select
     const textarea = new TextArea('description');
 
-    const survey = new Survey([
-        {stepNo: 1, element: text, required: true, question: '개인정보 수거한다. 이름을 써라.'},
-        {stepNo: 2, element: radios, required: true, question: '무슨 피자를 먹을건가요?'},
-        {stepNo: 3, element: checks, required: true, question: '무슨 토핑을 추가할건가요?'},
-        {stepNo: 4, element: select, required: true, question: '어디서 먹을건가요?'},
-        {stepNo: 5, element: textarea, required: true, question: '주인장에게 하고 싶은 말을 쓰세요.'}
-    ]);
+    const survey = new Survey();
+    survey.add({element: text, required: true, question: '개인정보 수거한다. 이름을 써라.'});
+    survey.add({element: radios, required: true, question: '무슨 피자를 먹을건가요?'});
+    survey.add({element: checks, required: true, question: '무슨 토핑을 추가할건가요?'});
+    survey.add({element: select, required: true, question: '어디서 먹을건가요?'});
+    survey.add({element: textarea, required: true, question: '주인장에게 하고 싶은 말을 쓰세요.'});
 
-    survey.update();
+    survey.load();
 };
 
 execute();
