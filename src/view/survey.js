@@ -15,6 +15,26 @@ export class Survey {
         this.headerTag = 'h3';
         this.survey = [];
         this.currentStepNo = 1;
+
+        this.prevStep = () => {
+            if (!this.isFirstStep) {
+                this.currentStepNo--;
+                this.update();
+            }
+        };
+
+        this.nextStep = () => {
+            if (!this.validate() && !this.isLastStep) {
+                this.currentStepNo++;
+                this.update();
+            }
+        };
+
+        this.submit = () => {
+            if (!this.validate() && this.isLastStep) {
+                this.resultTemplate();
+            }
+        };
     }
 
     add(item) {
@@ -60,9 +80,9 @@ export class Survey {
         this.nextButton.innerText = '다음';
         this.submitButton.innerText = '완료';
 
-        this.prevButton.addEventListener('click', this.prevStep.bind(this));
-        this.nextButton.addEventListener('click', this.nextStep.bind(this));
-        this.submitButton.addEventListener('click', this.submit.bind(this));
+        this.prevButton.addEventListener('click', this.prevStep);
+        this.nextButton.addEventListener('click', this.nextStep);
+        this.submitButton.addEventListener('click', this.submit);
     }
 
     resultTemplate() {
@@ -85,9 +105,9 @@ export class Survey {
 
         }).forEach((item) => this.formDiv.append(item));
 
-        this.prevButton.removeEventListener('click', this.prevStep.bind(this));
-        this.nextButton.removeEventListener('click', this.nextStep.bind(this));
-        this.submitButton.removeEventListener('click', this.submit.bind(this));
+        this.prevButton.removeEventListener('click', this.prevStep);
+        this.nextButton.removeEventListener('click', this.nextStep);
+        this.submitButton.removeEventListener('click', this.submit);
 
         this.buttonWrapper.innerHTML = '';
     }
@@ -115,20 +135,6 @@ export class Survey {
         return false;
     }
 
-    prevStep() {
-        if (!this.isFirstStep) {
-            this.currentStepNo--;
-            this.update();
-        }
-    }
-
-    nextStep() {
-        if (!this.validate() && !this.isLastStep) {
-            this.currentStepNo++;
-            this.update();
-        }
-    }
-
     changeStep(stepNo = this.currentStepNo) {
         this.step = this.survey.find((item) => item.stepNo === stepNo) || {question: '잘못된 스탭입니다.'};
     }
@@ -136,11 +142,5 @@ export class Survey {
     update() {
         this.changeStep();
         this.render(this.step);
-    }
-
-    submit() {
-        if (!this.validate() && this.isLastStep) {
-            this.resultTemplate();
-        }
     }
 }
