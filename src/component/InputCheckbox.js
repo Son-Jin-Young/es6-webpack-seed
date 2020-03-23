@@ -7,7 +7,13 @@ export class InputCheckbox extends Form {
 
     get getValue() {
         let returnValue = '';
-        const checked = this.element.map(elem => elem.children).filter(elem => elem[0].checked);
+        const childList = [];
+
+        for (const label of this.element.children) {
+            childList.push(label);
+        }
+
+        const checked = childList.map(elem => elem.children).filter(elem => elem[0].checked);
 
         if (checked) {
             const values = [];
@@ -27,7 +33,8 @@ export class InputCheckbox extends Form {
     }
 
     create() {
-        this.element = this.items.map((item, index) => {
+        this.element = document.createElement('div');
+        this.items.forEach((item, index) => {
             const checkID = `check_${item.value}_${index}`;
             const labelEL = document.createElement('label');
             labelEL.for = checkID;
@@ -43,7 +50,7 @@ export class InputCheckbox extends Form {
             labelEL.append(inputEL);
             labelEL.append(textNode);
 
-            return labelEL;
+            this.element.append(labelEL);
         });
     }
 }

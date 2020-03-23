@@ -109,18 +109,14 @@ export class Survey {
         this.nextButton.removeEventListener('click', this.nextStep);
         this.submitButton.removeEventListener('click', this.submit);
 
-        this.buttonWrapper.innerHTML = '';
+        this.buttonWrapper.remove();
     }
 
     render({question, element}) {
         this.questionHeader.innerText = question;
 
         this.formDiv.innerHTML = '';
-        if (Array.isArray(element.getElement())) {
-            element.getElement().forEach((item) => this.formDiv.append(item))
-        } else {
-            this.formDiv.append(element.getElement());
-        }
+        this.formDiv.append(element.getElement());
 
         this.prevButton.disabled = this.isFirstStep;
         this.nextButton.disabled = this.isLastStep;
